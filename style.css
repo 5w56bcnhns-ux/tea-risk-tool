@@ -1,0 +1,137 @@
+/* style.css */
+
+:root {
+  /* 品牌與主題色彩 (茶綠色系) */
+  --primary-green: #567D46;
+  --light-green: #E8F0E4;
+  --bg-color: #F8F9FA;
+  --text-main: #333333;
+  --text-muted: #888888;
+  --white: #FFFFFF;
+  --border-color: #E2E8F0;
+
+  /* 風險狀態色彩 */
+  --risk-safe: #4CAF50;
+  --risk-warning: #FFC107;
+  --risk-critical: #F44336;
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  margin: 0;
+  padding: 20px;
+}
+
+/* 儀表板主體佈局 (左側輸入 + 右側結果) */
+.dashboard {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 卡片共用樣式 */
+.card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+/* 頂部指標區塊 (Grid 佈局) */
+.metrics-header {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card h4 {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.metric-card .value {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--primary-green);
+}
+
+/* 輸入表單區塊 */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.input-group input[type="number"],
+.input-group input[type="range"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+/* 核心指標特別標註 */
+.core-metric {
+  background-color: var(--light-green);
+  border: 1px solid var(--primary-green);
+}
+
+/* 半圓環儀表板 (簡化版 CSS 呈現) */
+.gauge-container {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.probability-text {
+  font-size: 64px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.risk-label {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 12px;
+  color: var(--white);
+}
+
+/* 行動按鈕 */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: var(--primary-green);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background-color: #456638;
+}
