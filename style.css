@@ -1,19 +1,35 @@
-/* style.css */
+/* style.css - 茶風險評估工具樣式 */
 
 :root {
-  /* 品牌與主題色彩 (茶綠色系) */
-  --primary-green: #567D46;
-  --light-green: #E8F0E4;
+  /* 茶綠色系色彩調色盤 */
+  --primary-green: #567D46;      /* 主要茶綠色 */
+  --light-green: #E8F0E4;        /* 淺茶綠背景 */
+  --medium-green: #8BA77F;       /* 中等茶綠 */
+  --dark-green: #3A5C2E;         /* 深茶綠 */
+  --tea-shadow: rgba(86, 125, 70, 0.15); /* 茶綠色陰影 */
+  
+  /* 背景與文字色彩 */
   --bg-color: #F8F9FA;
   --text-main: #333333;
-  --text-muted: #888888;
+  --text-muted: #666666;
   --white: #FFFFFF;
   --border-color: #E2E8F0;
-
+  
   /* 風險狀態色彩 */
   --risk-safe: #4CAF50;
   --risk-warning: #FFC107;
   --risk-critical: #F44336;
+  
+  /* 陰影效果 */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 6px 20px rgba(86, 125, 70, 0.12);
+  --shadow-lg: 0 12px 32px rgba(86, 125, 70, 0.18);
+  
+  /* 圓角 */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
 }
 
 body {
@@ -22,33 +38,71 @@ body {
   color: var(--text-main);
   margin: 0;
   padding: 20px;
+  line-height: 1.6;
 }
 
 /* 儀表板主體佈局 (左側輸入 + 右側結果) */
 .dashboard {
   display: grid;
   grid-template-columns: 320px 1fr;
-  gap: 24px;
+  gap: 28px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* 卡片共用樣式 */
+/* 卡片共用樣式 - 增強版 */
 .card {
   background: var(--white);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--border-color);
-  margin-bottom: 20px;
+  border-radius: var(--radius-md);
+  padding: 28px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--light-green);
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--medium-green);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-green), var(--medium-green));
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 /* 頂部指標區塊 (Grid 佈局) */
 .metrics-header {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.metric-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-green);
 }
 
 .metric-card h4 {
@@ -56,39 +110,70 @@ body {
   font-size: 12px;
   color: var(--text-muted);
   text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
 }
 
 .metric-card .value {
-  font-size: 24px;
-  font-weight: bold;
+  font-size: 28px;
+  font-weight: 800;
   color: var(--primary-green);
+  line-height: 1.2;
 }
 
 /* 輸入表單區塊 */
 .input-group {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .input-group label {
   display: block;
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  color: var(--text-main);
 }
 
 .input-group input[type="number"],
 .input-group input[type="range"] {
   width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
   box-sizing: border-box;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background-color: var(--white);
+}
+
+.input-group input[type="number"]:focus,
+.input-group input[type="range"]:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(86, 125, 70, 0.1);
 }
 
 /* 核心指標特別標註 */
 .core-metric {
   background-color: var(--light-green);
-  border: 1px solid var(--primary-green);
+  border: 2px solid var(--primary-green);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  position: relative;
+}
+
+.core-metric::before {
+  content: '核心指標';
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  background: var(--primary-green);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
 }
 
 /* 半圓環儀表板 (簡化版 CSS 呈現) */
@@ -98,40 +183,211 @@ body {
 }
 
 .probability-text {
-  font-size: 64px;
-  font-weight: bold;
+  font-size: 72px;
+  font-weight: 900;
   line-height: 1;
+  margin: 20px 0;
+  background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .risk-label {
   display: inline-block;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: bold;
-  margin-top: 12px;
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 16px;
   color: var(--white);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.risk-label:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
 }
 
 /* 行動按鈕 */
 .btn {
   display: block;
   width: 100%;
-  padding: 12px;
+  padding: 16px;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
   text-align: center;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .btn-primary {
-  background-color: var(--primary-green);
+  background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
   color: var(--white);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
-  background-color: #456638;
+  background: linear-gradient(135deg, var(--dark-green), var(--primary-green));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* 圓餅圖容器樣式 */
+.pie-chart-container {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+  border: 2px solid var(--light-green);
+  margin-top: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pie-chart-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--risk-safe), var(--risk-warning), var(--risk-critical));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.pie-chart-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.pie-chart-header h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.pie-chart-icon {
+  color: var(--primary-green);
+  font-size: 24px;
+}
+
+/* 風險等級標籤樣式 */
+.risk-level-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: var(--light-green);
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.risk-level-item:hover {
+  transform: translateX(4px);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.risk-level-item.safe {
+  border-left-color: var(--risk-safe);
+}
+
+.risk-level-item.warning {
+  border-left-color: var(--risk-warning);
+}
+
+.risk-level-item.critical {
+  border-left-color: var(--risk-critical);
+}
+
+.risk-level-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.risk-level-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+  flex-grow: 1;
+}
+
+.risk-level-percent {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+/* 響應式設計 */
+@media (max-width: 1024px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .metrics-header {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .metrics-header {
+    grid-template-columns: 1fr;
+  }
+  
+  .probability-text {
+    font-size: 56px;
+  }
+  
+  .card {
+    padding: 20px;
+  }
+}
+
+/* 動畫效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card, .metric-card, .pie-chart-container {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* 自定義滾動條 */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-green);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--medium-green);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-green);
 }

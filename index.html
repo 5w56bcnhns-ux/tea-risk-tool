@@ -4,6 +4,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>繁體中文客戶流失風險評估儀表板 v2.0</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -95,7 +96,7 @@
 </div>
 <div class="flex w-full items-center gap-3">
 <div class="flex-1">
-<input class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary" max="90" min="0" type="range" value="45"/>
+<input id="days-since-visit" class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary" max="90" min="0" type="range" value="45"/>
 </div>
 <div class="w-16 text-right font-bold text-lg text-text-main dark:text-white bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded px-2 py-1">
                                 45
@@ -107,7 +108,7 @@
 <label class="flex flex-col w-full gap-2">
 <span class="text-text-main dark:text-white text-sm font-semibold">平均消費金額 ($)</span>
 <div class="flex w-full items-center rounded-lg bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all shadow-sm">
-<input class="w-full bg-transparent border-none focus:ring-0 p-3 text-text-main dark:text-white placeholder:text-text-muted" placeholder="0.00" type="number" value="12.50"/>
+<input id="average-spending" class="w-full bg-transparent border-none focus:ring-0 p-3 text-text-main dark:text-white placeholder:text-text-muted" placeholder="0.00" type="number" value="12.50"/>
 <div class="pr-3 text-text-muted">
 <span class="material-symbols-outlined">attach_money</span>
 </div>
@@ -116,7 +117,7 @@
 <label class="flex flex-col w-full gap-2">
 <span class="text-text-main dark:text-white text-sm font-semibold">到店頻率 (每月)</span>
 <div class="flex w-full items-center rounded-lg bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all shadow-sm">
-<input class="w-full bg-transparent border-none focus:ring-0 p-3 text-text-main dark:text-white placeholder:text-text-muted" placeholder="Visits/month" type="number" value="2"/>
+<input id="visit-frequency" class="w-full bg-transparent border-none focus:ring-0 p-3 text-text-main dark:text-white placeholder:text-text-muted" placeholder="Visits/month" type="number" value="2"/>
 <div class="pr-3 text-text-muted">
 <span class="material-symbols-outlined">history</span>
 </div>
@@ -185,20 +186,20 @@
 <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 <div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col items-center justify-center relative overflow-hidden">
 <div class="absolute top-4 right-4">
-<span class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5 border border-red-100 dark:border-red-800">
+<span id="risk-status-label" class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5 border border-red-100 dark:border-red-800">
 <span class="relative flex h-2 w-2">
 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
 <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
 </span>
-                            危險
-                        </span>
+                             危險
+                         </span>
 </div>
 <div class="relative w-full max-w-[280px] aspect-[2/1] mt-8 mb-2 overflow-hidden flex justify-center">
 <div class="absolute top-0 w-full h-[200%] rounded-full border-[2rem] border-gray-100 dark:border-gray-700 box-border"></div>
 <div class="absolute top-0 w-full h-[200%] rounded-full border-[2rem] border-transparent border-t-red-500 border-r-red-500 box-border transform -rotate-45 origin-center transition-all duration-1000 ease-out" style="transform: rotate(45deg);"></div>
 </div>
 <div class="text-center -mt-10 z-10 flex flex-col items-center">
-<span class="text-6xl font-black text-text-main dark:text-white tracking-tighter tabular-nums">78%</span>
+<span id="probability-result" class="text-6xl font-black text-text-main dark:text-white tracking-tighter tabular-nums">78%</span>
 <p class="text-text-muted text-sm font-bold uppercase tracking-wide mt-1">流失機率</p>
 </div>
 <div class="w-full mt-8 px-8">
@@ -327,6 +328,42 @@
 </div>
 </div>
 </div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800 mt-6">
+  <div class="flex items-center gap-2 mb-4">
+    <span class="material-symbols-outlined text-primary">pie_chart</span>
+    <h3 class="font-bold text-text-main dark:text-white text-sm">風險等級分布</h3>
+  </div>
+  <div class="flex flex-col lg:flex-row items-center gap-6">
+    <div class="w-48 h-48 relative">
+      <canvas id="riskPieChart"></canvas>
+    </div>
+    <div class="flex-1">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            <span class="text-sm text-text-main dark:text-white">安全</span>
+          </div>
+          <span id="safe-percent" class="font-bold text-text-main dark:text-white">0%</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <span class="text-sm text-text-main dark:text-white">警告</span>
+          </div>
+          <span id="warning-percent" class="font-bold text-text-main dark:text-white">0%</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+            <span class="text-sm text-text-main dark:text-white">危險</span>
+          </div>
+          <span id="critical-percent" class="font-bold text-text-main dark:text-white">0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </main>
 

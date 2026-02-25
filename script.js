@@ -9,7 +9,74 @@ document.addEventListener('DOMContentLoaded', () => {
     const probText = document.getElementById('probability-result');
     const riskLabel = document.getElementById('risk-status-label');
 
-    // 2. 核心運算邏輯 (模擬 Colab 數據模型)
+    // 圓餅圖變數
+    let riskPieChart = null;
+
+    // 2. 初始化圓餅圖
+    function initPieChart() {
+        const ctx = document.getElementById('riskPieChart');
+        if (!ctx) return;
+        
+        riskPieChart = new Chart(ctx.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: ['安全', '警告', '危險'],
+                datasets: [{
+                    data: [33, 33, 34],
+                    backgroundColor: [
+                        '#4CAF50', // 安全 - 綠色
+                        '#FFC107', // 警告 - 黃色
+                        '#F44336'  // 危險 - 紅色
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.parsed}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 3. 更新圓餅圖數據
+    function updatePieChart(probability) {
+        if (!riskPieChart) return;
+        
+        // 計算各風險等級的比例
+        let safePercent = 0;
+        let warningPercent = 0;
+        let criticalPercent = 0;
+        
+        if (probability < 30) {
+            safePercent = 100;
+        } else if (probability >= 30 && probability <= 60) {
+            warningPercent = 100;
+        } else {
+            criticalPercent = 100;
+        }
+        
+        // 更新圓餅圖數據
+        riskPieChart.data.datasets[0].data = [safePercent, warningPercent, criticalPercent];
+        riskPieChart.update();
+        
+        // 更新百分比顯示
+        document.getElementById('safe-percent').textContent = `${safePercent}%`;
+        document.getElementById('warning-percent').textContent = `${warningPercent}%`;
+        document.getElementById('critical-percent').textContent = `${criticalPercent}%`;
+    }
+
+    // 4. 核心運算邏輯 (模擬 Colab 數據模型)
     function calculateChurnRisk() {
         const days = parseFloat(daysInput.value) || 0;
         const spending = parseFloat(spendingInput.value) || 0;
@@ -32,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateUI(finalProbability);
     }
 
-    // 3. 更新畫面視覺與狀態
+    // 5. 更新畫面視覺與狀態
     function updateUI(probability) {
         // 更新數字顯示
         probText.textContent = `${probability}%`;
@@ -40,23 +107,27 @@ document.addEventListener('DOMContentLoaded', () => {
         // 判定風險等級與顏色
         let riskColor, riskText;
         if (probability > 60) {
-            riskColor = 'var(--risk-critical)';
+            riskColor = '#F44336'; // 紅色
             riskText = '危險 (Critical)';
         } else if (probability >= 30) {
-            riskColor = 'var(--risk-warning)';
+            riskColor = '#FFC107'; // 黃色
             riskText = '警告 (Warning)';
         } else {
-            riskColor = 'var(--risk-safe)';
+            riskColor = '#4CAF50'; // 綠色
             riskText = '安全 (Safe)';
         }
 
         // 更新標籤
         riskLabel.textContent = riskText;
         riskLabel.style.backgroundColor = riskColor;
+        riskLabel.style.color = probability > 60 ? '#ffffff' : '#000000';
         probText.style.color = riskColor;
+
+        // 更新圓餅圖
+        updatePieChart(probability);
     }
 
-    // 4. 綁定「即時感應」事件監聽器
+    // 6. 綁定「即時感應」事件監聽器
     // 使用 'input' 事件，確保滑桿拖曳或鍵盤輸入時能即時觸發
     const inputs = [daysInput, spendingInput, frequencyInput];
     inputs.forEach(input => {
@@ -65,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 初始化執行一次，顯示預設值的結果
+    // 7. 初始化
+    initPieChart();
     calculateChurnRisk();
 });
